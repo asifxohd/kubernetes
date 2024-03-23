@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shoecart-app
+  labels:
+    app: shoecart-web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shoecart-web-app
+  template:
+    metadata:
+      labels:
+        app: shoecart-web-app  
+    spec:
+      containers:
+        - image: asifxohd/django-kuberneties
+          name: shoecart
+          envFrom:
+          - secretRef:
+              name: shoecart-secret
+          ports:
+            - containerPort: 80
+              name: gunicorn
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shoecart-service
+spec:
+  selector:
+    app: shoecart-web-app
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+
+
